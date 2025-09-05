@@ -18,15 +18,16 @@ def mask_text(secret: str, guessed: Optional[Set[str]] = None) -> str:
     """
     Return a masked view of *secret*, revealing only letters in *guessed*.
 
-    Letters not in guessed become "_". Spaces are preserved by returning
+    Letters not in *guessed* become "_". Spaces are preserved by returning
     "" for them so the final join inserts spaces around them. Punctuation
-    remains visible. Example: 'Hello World!' -> '_ _ _ _ _  _ _ _ _ _ !'
+    remains visible.
+
+    Example:
+        "Hello World!" -> "_ _ _ _ _  _ _ _ _ _ !"
     """
     guessed = {c.lower() for c in (guessed or set())}
 
     def token(ch: str) -> str:
-        if ch == "":  # defensive, though we never pass empty chars here
-            return ""
         if ch == " ":
             # keep word breaks; returning "" makes join add spaces around it
             return ""
@@ -62,7 +63,7 @@ class Game:
         return self.lives <= 0 and not self.won
 
     def guess(self, raw: str) -> str:
-        """Apply one letter guess; returns 'hit'|'miss'|'repeat'|'invalid'."""
+        """Apply one letter guess; returns: 'hit'|'miss'|'repeat'|'invalid'."""
         if not raw or len(raw) != 1 or not raw.isalpha():
             return "invalid"
 
@@ -292,7 +293,6 @@ class HangmanApp(tk.Tk):
         if not self.g:
             return 0
         deadline = getattr(self.g, "_deadline", 0)
-        # use the public wrapper to avoid protected-member access
         return int(max(0, deadline - self.g.now()))
 
     def _tick(self) -> None:
